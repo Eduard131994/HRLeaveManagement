@@ -18,7 +18,7 @@ namespace HRLeaveManagement.Application.DTOs.LeaveRequest.Validators
                 .MustAsync(async (id, token) =>
                 {
                     var leaveTypeExists = await leaveTypeRepository.Exists(id);
-                    return !leaveTypeExists;
+                    return leaveTypeExists;
                 }).WithMessage("{PropertyName} does not exist");
         }
     }

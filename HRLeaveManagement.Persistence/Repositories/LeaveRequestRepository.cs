@@ -7,17 +7,16 @@ namespace HRLeaveManagement.Persistence.Repositories
     public class LeaveRequestRepository : GenericRepository<LeaveRequest>, ILeaveRequestRepository
     {
         private readonly LeaveManagementDbContext _dbContext;
+
         public LeaveRequestRepository(LeaveManagementDbContext dbContext) : base(dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public async Task ChangeApprovalStatus(LeaveRequest leaveRequest, bool? approved)
+        public async Task ChangeApprovalStatus(LeaveRequest leaveRequest, bool? ApprovalStatus)
         {
-            leaveRequest.Approved = approved;
+            leaveRequest.Approved = ApprovalStatus;
             _dbContext.Entry(leaveRequest).State = EntityState.Modified;
-            await _dbContext.SaveChangesAsync();
-
         }
 
         public async Task<List<LeaveRequest>> GetLeaveRequestsWithDetails()
@@ -25,7 +24,14 @@ namespace HRLeaveManagement.Persistence.Repositories
             var leaveRequests = await _dbContext.LeaveRequests
                 .Include(q => q.LeaveType)
                 .ToListAsync();
+            return leaveRequests;
+        }
 
+        public async Task<List<LeaveRequest>> GetLeaveRequestsWithDetails(string userId)
+        {
+            var leaveRequests = await _dbContext.LeaveRequests.Where(q => q.RequestingEmployeeId == userId)
+                .Include(q => q.LeaveType)
+                .ToListAsync();
             return leaveRequests;
         }
 
@@ -33,7 +39,7 @@ namespace HRLeaveManagement.Persistence.Repositories
         {
             var leaveRequest = await _dbContext.LeaveRequests
                 .Include(q => q.LeaveType)
-                .FirstOrDefaultAsync(x => x.Id == id);
+                .FirstOrDefaultAsync(q => q.Id == id);
 
             return leaveRequest;
         }

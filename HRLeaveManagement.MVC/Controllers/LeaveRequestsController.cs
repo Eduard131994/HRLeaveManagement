@@ -18,9 +18,9 @@ namespace HRLeaveManagement.MVC.Controllers
         public LeaveRequestsController(ILeaveTypeService leaveTypeService, ILeaveRequestService leaveRequestService,
             IMapper mapper)
         {
-            this._leaveTypeService = leaveTypeService;
-            this._leaveRequestService = leaveRequestService;
-            this._mapper = mapper;
+            _leaveTypeService = leaveTypeService;
+            _leaveRequestService = leaveRequestService;
+            _mapper = mapper;
         }
 
         // GET: LeaveRequest/Create

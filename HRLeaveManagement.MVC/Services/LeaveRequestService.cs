@@ -24,7 +24,7 @@ namespace HRLeaveManagement.MVC.Services
             try
             {
                 var request = new ChangeLeaveRequestApprovalDto { Approved = approved, Id = id };
-                await _client.ChangeapprovalAsync(id, request);
+                await _client.ChangeAsync(id, request);
             }
             catch (Exception)
             {
@@ -61,11 +61,6 @@ namespace HRLeaveManagement.MVC.Services
             }
         }
 
-        public Task DeleteLeaveRequest(int id)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<AdminLeaveRequestViewVM> GetAdminLeaveRequestList()
         {
             AddBearerToken();
@@ -89,6 +84,7 @@ namespace HRLeaveManagement.MVC.Services
             return _mapper.Map<LeaveRequestVM>(leaveRequest);
         }
 
+
         public async Task<EmployeeLeaveRequestViewVM> GetUserLeaveRequests()
         {
             AddBearerToken();
@@ -101,6 +97,10 @@ namespace HRLeaveManagement.MVC.Services
             };
 
             return model;
+        }
+        public Task DeleteLeaveRequest(int id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

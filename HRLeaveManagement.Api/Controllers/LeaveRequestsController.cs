@@ -1,6 +1,7 @@
 ﻿using HRLeaveManagement.Application.DTOs.LeaveRequest;
 using HRLeaveManagement.Application.Features.LeaveRequests.Requests.Commands;
 using HRLeaveManagement.Application.Features.LeaveRequests.Requests.Querries;
+using HRLeaveManagement.Application.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,11 +21,10 @@ namespace HRLeaveManagement.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<LeaveRequestListDto>>> Get()
+        public async Task<ActionResult<List<LeaveRequestListDto>>> Get(bool isLoggedInUser = false)
         {
-            var leaveReqesuts = await _mediator.Send(new GetLeaveRequestListRequest());
-
-            return Ok(leaveReqesuts);
+            var leaveRequests = await _mediator.Send(new GetLeaveRequestListRequest() { IsLoggedInUser = isLoggedInUser });
+            return Ok(leaveRequests);
         }
 
         [HttpGet("{id}")]
@@ -35,9 +35,9 @@ namespace HRLeaveManagement.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<int>> Post([FromBody] CreateLeaveRequestDto createLeaveRequestDto)
+        public async Task<ActionResult<BaseCommandResponse>> Post([FromBody] CreateLeaveRequestDto createLeaveRequestDto)
         {
-            var leaveReqesutId = await _mediator.Send(new CreateLeaveRequestCommand() { CreateLeaveRequestDto = createLeaveRequestDto });
+            var leaveReqesutId = await _mediator.Send(new CreateLeaveRequestCommand() { LeaveRequestDto = createLeaveRequestDto });
             return Ok(leaveReqesutId);
 
         }
@@ -45,7 +45,7 @@ namespace HRLeaveManagement.Api.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult> Put(int id, [FromBody] UpdateLeaveRequestDto updateLeaveRequestDto)
         {
-            await _mediator.Send(new UpdateLeaveRequestCommand() { Id = id, UpdateLeaveRequestDto = updateLeaveRequestDto });
+            await _mediator.Send(new UpdateLeaveRequestCommand() { Id = id, LeaveRequestDto = updateLeaveRequestDto });
             return NoContent();
         }
 

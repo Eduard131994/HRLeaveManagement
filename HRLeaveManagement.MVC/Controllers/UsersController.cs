@@ -13,20 +13,19 @@ namespace HRLeaveManagement.MVC.Controllers
             this._authService = authService;
         }
 
-        public IActionResult Login(string returnUrl = "")
+        public IActionResult Login()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(LoginVM login, string returnUrl)
+        public async Task<IActionResult> Login(LoginVM login)
         {
             if (ModelState.IsValid)
             {
-                returnUrl ??= Url.Content("~/");
                 var isLoggedIn = await _authService.Authenticate(login.Email, login.Password);
                 if (isLoggedIn)
-                    return LocalRedirect(returnUrl);
+                    return LocalRedirect(Url.Content("~/"));
             }
             ModelState.AddModelError("", "Log In Attempt Failed. Please try again.");
             return View(login);

@@ -1,6 +1,6 @@
-﻿using HRLeaveManagement.Application.Exceptions;
+﻿using HRLeaveManagement.Application.Contracts.Persistence;
+using HRLeaveManagement.Application.Exceptions;
 using HRLeaveManagement.Application.Features.LeaveRequests.Requests.Commands;
-using HRLeaveManagement.Application.Persistence.Contracts;
 using HRLeaveManagement.Domain;
 using MediatR;
 
@@ -8,21 +8,22 @@ namespace HRLeaveManagement.Application.Features.LeaveRequests.Handlers.Commands
 {
     public class DeleteLeaveRequestCommandHandler : IRequestHandler<DeleteLeaveRequestCommand>
     {
-        private readonly ILeaveRequestRepository _leaveRequestRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public DeleteLeaveRequestCommandHandler(ILeaveRequestRepository leaveRequestRepository)
+        public DeleteLeaveRequestCommandHandler(IUnitOfWork unitOfWork)
         {
-            _leaveRequestRepository = leaveRequestRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Unit> Handle(DeleteLeaveRequestCommand request, CancellationToken cancellationToken)
         {
-            var leaveRequest = await _leaveRequestRepository.Get(request.Id);
+            var leaveRequest = await _unitOfWork.LeaveRequestRepository.Get(request.Id);
 
             if (leaveRequest == null)
                 throw new NotFoundException(nameof(LeaveRequest), request.Id);
 
-            await _leaveRequestRepository.Delete(leaveRequest);
+            await _unitOfWork.LeaveRequestRepository.Delete(leaveRequest);
+            await _unitOfWork.Save();
             return Unit.Value;
         }
     }

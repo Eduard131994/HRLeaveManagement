@@ -1,21 +1,21 @@
 ﻿using AutoMapper;
+using HRLeaveManagement.Application.Contracts.Persistence;
 using HRLeaveManagement.Application.DTOs.LeaveType.Validators;
 using HRLeaveManagement.Application.Exceptions;
 using HRLeaveManagement.Application.Features.LeaveTypes.Requests.Commands;
-using HRLeaveManagement.Application.Persistence.Contracts;
 using MediatR;
 
 namespace HRLeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
 {
     public class UpdateLeaveTypeCommandHandler : IRequestHandler<UpdateLeaveTypeCommand, Unit>
     {
-        private readonly ILeaveTypeRepository _leaveTypeRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public UpdateLeaveTypeCommandHandler(ILeaveTypeRepository leaveTypeRepository, IMapper mapper)
+        public UpdateLeaveTypeCommandHandler(IMapper mapper, IUnitOfWork unitOfWork)
         {
-            _leaveTypeRepository = leaveTypeRepository;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
         public async Task<Unit> Handle(UpdateLeaveTypeCommand request, CancellationToken cancellationToken)
         {
@@ -25,11 +25,12 @@ namespace HRLeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
             if (validationResult.IsValid == false)
                 throw new ValidationException(validationResult);
 
-            var leaveType = await _leaveTypeRepository.Get(request.LeaveTypeDto.Id);
+            var leaveType = await _unitOfWork.LeaveTypeRepository.Get(request.LeaveTypeDto.Id);
 
             _mapper.Map(request.LeaveTypeDto, leaveType);
 
-            await _leaveTypeRepository.Update(leaveType);
+            await _unitOfWork.LeaveTypeRepository.Update(leaveType);
+            await _unitOfWork.Save();
 
             return Unit.Value;
         }

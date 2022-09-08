@@ -20,7 +20,7 @@ namespace HRLeaveManagement.Application.DTOs.LeaveAllocation.Validators
                 .MustAsync(async (id, token) =>
                 {
                     var leaveAllocation = await leaveAllocationRepository.Exists(id);
-                    return !leaveAllocation;
+                    return leaveAllocation;
                 })
                 .WithMessage("{PropertyName} does not exist.");
 

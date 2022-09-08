@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using HRLeaveManagement.Application.Contracts.Persistence;
 using HRLeaveManagement.Application.DTOs.LeaveAllocation;
 using HRLeaveManagement.Application.Features.LeaveAllocations.Requests.Querries;
-using HRLeaveManagement.Application.Persistence.Contracts;
 using MediatR;
 
 namespace HRLeaveManagement.Application.Features.LeaveAllocations.Handlers.Queries
@@ -9,16 +9,16 @@ namespace HRLeaveManagement.Application.Features.LeaveAllocations.Handlers.Queri
     public class GetLeaveAllocationDetailsRequestHandler : IRequestHandler<GetLeaveAllocationDetailsRequest, LeaveAllocationDto>
     {
         private readonly IMapper _mapper;
-        private readonly ILeaveAllocationRepository _leaveAllocationRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetLeaveAllocationDetailsRequestHandler(IMapper mapper, ILeaveAllocationRepository leaveAllocationRepository)
+        public GetLeaveAllocationDetailsRequestHandler(IMapper mapper, IUnitOfWork unitOfWork)
         {
             _mapper = mapper;
-            _leaveAllocationRepository = leaveAllocationRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<LeaveAllocationDto> Handle(GetLeaveAllocationDetailsRequest request, CancellationToken cancellationToken)
         {
-            var leaveAllocation = await _leaveAllocationRepository.GetLeaveAllocationWithDetails(request.Id);
+            var leaveAllocation = await _unitOfWork.LeaveAllocationRepository.GetLeaveAllocationWithDetails(request.Id);
 
             return _mapper.Map<LeaveAllocationDto>(leaveAllocation);
 

@@ -91,7 +91,7 @@ namespace HRLeaveManagement.Identity.Services
             }
             else
             {
-                throw new Exception($"Email {request.Email } already exists.");
+                throw new Exception($"Email {request.Email} already exists.");
             }
         }
 
@@ -111,7 +111,7 @@ namespace HRLeaveManagement.Identity.Services
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(ClaimTypes.Email, user.Email),
                 new Claim(CustomClaimTypes.Uid, user.Id)
             }
             .Union(userClaims)

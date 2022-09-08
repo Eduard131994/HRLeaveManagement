@@ -33,7 +33,7 @@ namespace HRLeaveManagement.MVC.Models
         [Required]
         public DateTime EndDate { get; set; }
 
-        public SelectList LeaveTypes { get; set; }
+        public SelectList? LeaveTypes { get; set; }
 
         [Display(Name = "Leave Type")]
         [Required]
