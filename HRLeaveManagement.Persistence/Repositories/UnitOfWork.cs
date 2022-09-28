@@ -1,5 +1,7 @@
-﻿using HRLeaveManagement.Application.Contracts.Persistence;
+﻿using HRLeaveManagement.Application.Constants;
+using HRLeaveManagement.Application.Contracts.Persistence;
 using HRLeaveManagement.Application.Persistence.Contracts;
+using Microsoft.AspNetCore.Http;
 
 namespace HRLeaveManagement.Persistence.Repositories
 {
@@ -9,10 +11,12 @@ namespace HRLeaveManagement.Persistence.Repositories
         private ILeaveAllocationRepository _leaveAllocationRepository;
         private ILeaveRequestRepository _leaveRequestRepository;
         private ILeaveTypeRepository _leaveTypeRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UnitOfWork(LeaveManagementDbContext context)
+        public UnitOfWork(LeaveManagementDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _httpContextAccessor = httpContextAccessor;
         }
         public ILeaveTypeRepository LeaveTypeRepository => _leaveTypeRepository ??= new LeaveTypeRepository(_context);
 
@@ -28,7 +32,9 @@ namespace HRLeaveManagement.Persistence.Repositories
 
         public async Task Save()
         {
-            await _context.SaveChangesAsync();
+            var username = _httpContextAccessor.HttpContext.User.FindFirst(CustomClaimTypes.Uid)?.Value;
+
+            await _context.SaveChangesAsync(username);
         }
     }
 }

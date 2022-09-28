@@ -1,4 +1,5 @@
 using HRLeaveManagement.Api.Extensions;
+using HRLeaveManagement.Api.Middleware;
 using HRLeaveManagement.Application;
 using HRLeaveManagement.Identity;
 using HRLeaveManagement.Infrastructure;
@@ -36,7 +37,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
